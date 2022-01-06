@@ -10,11 +10,7 @@ function EventDetailPage() {
   const router = useRouter();
 
   const eventId = router.query.eventId;
-  console.log("\n\n\n\n\n")
-  console.log("eventId: ", eventId)
   const event = getEventById(eventId);
-  console.log("event: ", event)
-
 
   // walidacja danych
   if (!event) {
