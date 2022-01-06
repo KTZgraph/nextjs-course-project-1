@@ -14,6 +14,8 @@ function EventsSearch(props) {
         const selectedYear = yearInputRef.current.value; // aktualna wwartosci z <select
         const selectedMonth = monthInputRef.current.value; // aktualna wwartosci z <select
 
+        // typowyu przykąłd dla programistycznej nawigacji
+        props.onSearch(selectedYear, selectedMonth); //taka nazwa bo spodziewam sie że wartośc jest funkcją
     }
 
     return <form className={classes.form} onSubmit={submitHandler}>
