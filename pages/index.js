@@ -1,4 +1,5 @@
 import { getFeaturedEvents } from "../dummy-data";
+import EventList from '../components/events/event-list';
 
 function HomePage() {
   // przyszłe wydarzenia
@@ -6,7 +7,7 @@ function HomePage() {
 
   return (
     <div>
-      
+      <EventList items={featureEvents}/>
     </div>
   );
 }

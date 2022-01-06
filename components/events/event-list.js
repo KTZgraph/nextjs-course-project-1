@@ -3,12 +3,25 @@
 // indywidualnie mozna taki tak nazywać
 import EventItem from "./event-item";
 
-
 function EventList(props) {
   // props - eventy są z zewnątrz poprzekazane dane
   const { items } = props;
 
-  return <ul>{items.map(event => <EventItem />)}</ul>;
+  return (
+    <ul>
+      {items.map((event) => (
+        //   pamieać o key,które jest wymagane przez REact!
+        <EventItem
+          key={event.id}
+          id={event.id}
+          title={event.title}
+          location={event.location}
+          data={event.date}
+          image={event.image}
+        />
+      ))}
+    </ul>
+  );
 }
 
 export default EventList;
