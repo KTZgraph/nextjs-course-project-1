@@ -1,7 +1,12 @@
 // dla dwóch i wiecej dynamicznych parametrów wejdzie tutaj a nie do [eventId].js
 import { useRouter } from "next/router"; // z nexta
+import { Fragment } from "react";
 
-import {getFilteredEvents} from '../../dummy-data'
+import { getFilteredEvents } from "../../dummy-data";
+import EventList from "../../components/events/event-list";
+import ResultsTitle from "../../components/events/results-title";
+import Button from "../../components/ui/button";
+import ErrorAlert from "../../components/ui/error-alert";
 
 function FilteredEventsPage() {
   const router = useRouter();
@@ -27,7 +32,17 @@ function FilteredEventsPage() {
     numMonth < 1 ||
     numMonth > 12
   ) {
-    return <p>Invalid filter. Please adjust your values!</p>
+    return (
+      <Fragment>
+        <ErrorAlert>
+          <p>Invalid filter. Please adjust your values!</p>
+        </ErrorAlert>
+        <div className="center">
+          {/* globalna klasa żeby przycisk był na środku */}
+          <Button link="/events">Show All Events</Button>
+        </div>
+      </Fragment>
+    );
   }
 
   // szukanie danych po dacie
@@ -37,14 +52,27 @@ function FilteredEventsPage() {
   });
 
   //może nie być w bazie tego
-  if(!filteredEvens || filteredEvens.length === 0) {
-    return <p>No events found for the chosen filter!</p>
+  if (!filteredEvens || filteredEvens.length === 0) {
+    return (
+      <Fragment>
+        <ErrorAlert>
+          <p>No events found for the chosen filter!</p>
+        </ErrorAlert>
+        <div className="center">
+          {/* globalna klasa żeby przycisk był na środku */}
+          <Button link="/events">Show All Events</Button>
+        </div>
+      </Fragment>
+    );
   }
 
+  //ektra nagłówek nad wyfiltrowanymi eventami
+  const date = new Date(numYear, numMonth - 1); // miescia zaczyna sie od zera
   return (
-    <div>
-      <h1> Filtered Events</h1>
-    </div>
+    <Fragment>
+      <ResultsTitle data={date} />
+      <EventList items={filteredEvens} />
+    </Fragment>
   );
 }
 
