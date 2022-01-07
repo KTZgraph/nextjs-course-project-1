@@ -3,7 +3,6 @@ import { useRouter } from "next/router"; // z nexta
 import { Fragment, useEffect, useState } from "react";
 import useSWR from "swr";
 
-import { getFilteredEvents } from "../../helpers/api-utils";
 import EventList from "../../components/events/event-list";
 import ResultsTitle from "../../components/events/results-title";
 import Button from "../../components/ui/button";
@@ -21,6 +20,9 @@ function FilteredEventsPage(props) {
   );
 
   useEffect(() => {
+    console.log("\n\n\n\n\n")
+    console.log("tutaj")
+
     if (data) {
       const events = [];
       for (const key in data) {
@@ -41,6 +43,8 @@ function FilteredEventsPage(props) {
 
   const numYear = +filteredYear; // zamiana na liczbę przez znak dodawania JS triczek
   const numMonth = +filteredMonth;
+  console.log("numMonth")
+  console.log(numMonth)
 
   // walidacja czy dane z urla prawdiłowe, czy n. ktoś nie wpisał abss zamiast liczby
   if (
@@ -90,7 +94,6 @@ function FilteredEventsPage(props) {
     );
   }
 
-  //ektra nagłówek nad wyfiltrowanymi eventami
   const date = new Date(numYear, numMonth - 1); // miesiace zaczynaja sie od zera
   return (
     <Fragment>
@@ -100,57 +103,5 @@ function FilteredEventsPage(props) {
   );
 }
 
-/******************BRAK SENSU MIESZANIA getServerSideProps z klientem ******************/
-//sens jest gdy musiz sprawdzać request headers albo cookies etc
-//akurat getServerSideProps nie ma sensu z pobieranie przez klienta (getStaticProps ma sens mieszanie z klientem)
-// export async function getServerSideProps(context) {
-//   // to jest ok, ale z pobieraniem po stronie klienta dane będą się pobierać trochę szybciej
-//   // i ten widok nie jest tak ważny dla search engines
-//   const { params } = context;
-
-//   const filterData = params.slug;
-
-//   const filteredYear = filterData[0]; // zawsze string
-//   const filteredMonth = filterData[1];
-
-//   const numYear = +filteredYear; // zamiana na liczbę przez znak dodawania JS triczek
-//   const numMonth = +filteredMonth;
-
-//   // walidacja czy dane z urla prawdiłowe, czy n. ktoś nie wpisał abss zamiast liczby
-//   if (
-//     isNaN(numYear) ||
-//     isNaN(numMonth) ||
-//     numYear > 2030 ||
-//     numYear < 2021 ||
-//     numMonth < 1 ||
-//     numMonth > 12
-//   ) {
-//     //gdy nie udało się pobrac danych z filtra
-//     return {
-//       props: { hasError: true }, // konkrenty komunikat błedu
-//       // notFound: true, // 404
-//       // redirect: { // przekirowanie do jakieś strony
-//       //   destination:'/error'
-//       // }
-//     };
-//   }
-
-//   // szukanie danych po dacie
-//   const filteredEvens = await getFilteredEvents({
-//     year: numYear,
-//     month: numMonth,
-//   });
-
-//   return {
-//     props: {
-//       events: filteredEvens,
-//       // do naglowka w wyfiltrowanych danych
-//       date: {
-//         year: numYear,
-//         month: numMonth,
-//       },
-//     },
-//   };
-// }
 
 export default FilteredEventsPage;
