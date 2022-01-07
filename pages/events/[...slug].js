@@ -70,7 +70,8 @@ function FilteredEventsPage(props) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context) { // to jest ok, ale z pobieraniem po stronie klienta dane będą się pobierać trochę szybciej
+  // i ten widok nie jest tak ważny dla search engines
   const { params } = context;
 
   const filterData = params.slug;
