@@ -17,18 +17,17 @@ function FilteredEventsPage(props) {
   const filterData = router.query.slug; // dopiero jak się komponent wyrenderuje - wiec 2 razy sie wykonuje, nie problem ale trzeba sprawdzić czy mam yjuż dane
 
   const { data, error } = useSWR(
-    "https://nextjs-course-28060-default-rtdb.firebaseio.com/events"
+    "https://nextjs-course-28060-default-rtdb.firebaseio.com/events.json"
   );
 
   useEffect(() => {
     if (data) {
-      //transformacja danych
       const events = [];
       for (const key in data) {
-        // spread operator ...data[key] żeby nie przepisywać wszystkich kluczy z bazy recznie
         events.push({ id: key, ...data[key] });
       }
-
+      console.log("events");
+      console.log(events);
       setLoadedEvents(events);
     }
   }, [data]);
@@ -43,16 +42,16 @@ function FilteredEventsPage(props) {
   const numYear = +filteredYear; // zamiana na liczbę przez znak dodawania JS triczek
   const numMonth = +filteredMonth;
 
-  //trochę skrót - noramlnei chcemy pobrac tylko te dane któe spełniają filtry
-  const filteredEvents = loadedEvents.filter((event) => {
-    const eventDate = new Date(event.date);
-    return eventDate.getFullYear() === numYear && eventDate.getMonth() === numMonth - 1;
-  });
-
-  // pobieranie po stronie klienta
-
   // walidacja czy dane z urla prawdiłowe, czy n. ktoś nie wpisał abss zamiast liczby
-  if (props.hasError) { //już teraz nie będzie działać bo nie używamy renderowania po strownie serwera tylko klienta
+  if (
+    isNaN(numYear) ||
+    isNaN(numMonth) ||
+    numYear > 2030 ||
+    numYear < 2021 ||
+    numMonth < 1 ||
+    numMonth > 12 ||
+    error //erro pochodzi z hgooka SWR, można osobno obsłużyć
+  ) {
     // gdy mamy konkrentgo propsa, ze jest błąd
     return (
       <Fragment>
@@ -67,8 +66,14 @@ function FilteredEventsPage(props) {
     );
   }
 
-  // szukanie danych po dacie
-  const filteredEvens = props.events; // już są wyfiltrowane w getServerSideProps
+  //trochę skrót - noramlnei chcemy pobrac tylko te dane któe spełniają filtry
+  const filteredEvens = loadedEvents.filter((event) => {
+    const eventDate = new Date(event.date);
+    return (
+      eventDate.getFullYear() === numYear &&
+      eventDate.getMonth() === numMonth - 1
+    );
+  });
 
   //może nie być w bazie tego
   if (!filteredEvens || filteredEvens.length === 0) {
@@ -86,7 +91,7 @@ function FilteredEventsPage(props) {
   }
 
   //ektra nagłówek nad wyfiltrowanymi eventami
-  const date = new Date(props.date.year, props.date.month - 1); // miescia zaczyna sie od zera
+  const date = new Date(numYear, numMonth - 1); // miesiace zaczynaja sie od zera
   return (
     <Fragment>
       <ResultsTitle data={date} />
@@ -95,54 +100,57 @@ function FilteredEventsPage(props) {
   );
 }
 
-export async function getServerSideProps(context) {
-  // to jest ok, ale z pobieraniem po stronie klienta dane będą się pobierać trochę szybciej
-  // i ten widok nie jest tak ważny dla search engines
-  const { params } = context;
+/******************BRAK SENSU MIESZANIA getServerSideProps z klientem ******************/
+//sens jest gdy musiz sprawdzać request headers albo cookies etc
+//akurat getServerSideProps nie ma sensu z pobieranie przez klienta (getStaticProps ma sens mieszanie z klientem)
+// export async function getServerSideProps(context) {
+//   // to jest ok, ale z pobieraniem po stronie klienta dane będą się pobierać trochę szybciej
+//   // i ten widok nie jest tak ważny dla search engines
+//   const { params } = context;
 
-  const filterData = params.slug;
+//   const filterData = params.slug;
 
-  const filteredYear = filterData[0]; // zawsze string
-  const filteredMonth = filterData[1];
+//   const filteredYear = filterData[0]; // zawsze string
+//   const filteredMonth = filterData[1];
 
-  const numYear = +filteredYear; // zamiana na liczbę przez znak dodawania JS triczek
-  const numMonth = +filteredMonth;
+//   const numYear = +filteredYear; // zamiana na liczbę przez znak dodawania JS triczek
+//   const numMonth = +filteredMonth;
 
-  // walidacja czy dane z urla prawdiłowe, czy n. ktoś nie wpisał abss zamiast liczby
-  if (
-    isNaN(numYear) ||
-    isNaN(numMonth) ||
-    numYear > 2030 ||
-    numYear < 2021 ||
-    numMonth < 1 ||
-    numMonth > 12
-  ) {
-    //gdy nie udało się pobrac danych z filtra
-    return {
-      props: { hasError: true }, // konkrenty komunikat błedu
-      // notFound: true, // 404
-      // redirect: { // przekirowanie do jakieś strony
-      //   destination:'/error'
-      // }
-    };
-  }
+//   // walidacja czy dane z urla prawdiłowe, czy n. ktoś nie wpisał abss zamiast liczby
+//   if (
+//     isNaN(numYear) ||
+//     isNaN(numMonth) ||
+//     numYear > 2030 ||
+//     numYear < 2021 ||
+//     numMonth < 1 ||
+//     numMonth > 12
+//   ) {
+//     //gdy nie udało się pobrac danych z filtra
+//     return {
+//       props: { hasError: true }, // konkrenty komunikat błedu
+//       // notFound: true, // 404
+//       // redirect: { // przekirowanie do jakieś strony
+//       //   destination:'/error'
+//       // }
+//     };
+//   }
 
-  // szukanie danych po dacie
-  const filteredEvens = await getFilteredEvents({
-    year: numYear,
-    month: numMonth,
-  });
+//   // szukanie danych po dacie
+//   const filteredEvens = await getFilteredEvents({
+//     year: numYear,
+//     month: numMonth,
+//   });
 
-  return {
-    props: {
-      events: filteredEvens,
-      // do naglowka w wyfiltrowanych danych
-      date: {
-        year: numYear,
-        month: numMonth,
-      },
-    },
-  };
-}
+//   return {
+//     props: {
+//       events: filteredEvens,
+//       // do naglowka w wyfiltrowanych danych
+//       date: {
+//         year: numYear,
+//         month: numMonth,
+//       },
+//     },
+//   };
+// }
 
 export default FilteredEventsPage;
