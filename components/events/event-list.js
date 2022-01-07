@@ -23,6 +23,8 @@ function EventList(props) {
       ))}
     </ul>
   );
+
 }
+
 
 export default EventList;

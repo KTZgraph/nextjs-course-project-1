@@ -1,13 +1,13 @@
 import { Fragment } from "react";
 import { useRouter } from "next/router";
 
-import { getAllEvents } from "../../dummy-data";
+import { getAllEvents } from "../../helpers/api-utils";
 import EventList from "../../components/events/event-list";
 import EventsSearch from "../../components/events/events-search";
 
-function AllEventPage() {
-  const events = getAllEvents();
+function AllEventPage(props) {
   const router = useRouter(); // wszystkie komponenty reacta msuza byc w glownym komponencie
+  const {events} = props;
 
   function findEventsHandler(year, month) {
     // wymuszenie żeby [..slug].js było uruchomione dlatego dwie zmienne
@@ -21,6 +21,16 @@ function AllEventPage() {
       <EventList items={events} />
     </Fragment>
   );
+}
+
+export async function getStaticProps() {
+  const events = await getAllEvents();
+  return {
+    props: {
+      events: events,
+    },
+    revalidate: 60, //co minutę jak nowy request przychodzi to rerenderujemy stronę
+  }
 }
 
 export default AllEventPage;

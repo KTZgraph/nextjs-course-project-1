@@ -1,4 +1,5 @@
-export async function getAllEvents() { //zwraca promisa
+export async function getAllEvents() {
+  //zwraca promisa
   const response = await fetch(
     "https://nextjs-course-28060-default-rtdb.firebaseio.com/events.json"
   );
@@ -13,14 +14,12 @@ export async function getAllEvents() { //zwraca promisa
   return events;
 }
 
-
 export async function getFeaturedEvents() {
   const allEvents = await getAllEvents();
-  return allEvents.filter((event) => event.isFeatured)
+  return allEvents.filter((event) => event.isFeatured);
 }
 
-
 export async function getEventById(id) {
-    const allEvents = await getAllEvents();
-    return allEvents.filter((event) => event.id === id)
+  const allEvents = await getAllEvents();
+  return allEvents.filter((event) => event.id === id);
 }
