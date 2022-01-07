@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 
-import { getEventById, getAllEvents } from "../../helpers/api-utils";
+import { getEventById, getFeaturedEvents } from "../../helpers/api-utils";
 import EventSummary from "../../components/event-detail/event-summary";
 import EventLogistics from "../../components/event-detail/event-logistics";
 import EventContent from "../../components/event-detail/event-content";
@@ -13,9 +13,9 @@ function EventDetailPage(props) {
   // walidacja danych
   if (!event) {
     return (
-      <ErrorAlert>
-        <p>No event found</p>
-      </ErrorAlert>
+      <div className="center">
+        <p>Loading...</p>
+      </div>
     );
   }
 
@@ -43,17 +43,22 @@ export async function getStaticProps(context) {
     props: {
       selectedEvent: event,
     },
+    revalidate: 30//szybciej bo zmiana daty jest ważniejsza niż cała lista
   };
 }
 
 export async function getStaticPaths() {
   // instancje dla których trzeba wyrenderować wczesniej strony
-  const events = await getAllEvents();
+  const events = await getFeaturedEvents(); // raczej się zmieniają i są ogladane tylko przyszłe wydarzenia
+  //to tez w konsekwnecji sprawia, ze niektóe wydarzenia nie będę prerenderowane
+
   const paths = events.map((event) => ({ params: { eventId: event.id } }));
 
   return {
     paths: paths,
-    fallback: false // bo wszsytkie strony sie wyrenderowało
+    // będzie starała się dynamcicnzie renderowac strony
+    fallback: 'blocking' // jest wiecej stron niż te które się wyrenderowany
+    //block nextjs niż nie srerwuje dopóki nie wyrenederujemy strony; trochę dłuzej to trwa ale zwraca już całą stronę
   }
 }
 
