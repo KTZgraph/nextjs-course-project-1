@@ -1,4 +1,5 @@
 // dla dwóch i wiecej dynamicznych parametrów wejdzie tutaj a nie do [eventId].js
+import Head from "next/head";
 import { useRouter } from "next/router"; // z nexta
 import { Fragment, useEffect, useState } from "react";
 import useSWR from "swr";
@@ -97,6 +98,13 @@ function FilteredEventsPage(props) {
   const date = new Date(numYear, numMonth - 1); // miesiace zaczynaja sie od zera
   return (
     <Fragment>
+      <Head>
+        <title>Filtered Events</title>
+        <meta
+          name="description"
+          content={`All eventns for: ${numMonth}/${numYear}`}
+        />
+      </Head>
       <ResultsTitle data={date} />
       <EventList items={filteredEvens} />
     </Fragment>
