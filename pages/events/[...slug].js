@@ -21,8 +21,8 @@ function FilteredEventsPage(props) {
   );
 
   useEffect(() => {
-    console.log("\n\n\n\n\n")
-    console.log("tutaj")
+    console.log("\n\n\n\n\n");
+    console.log("tutaj");
 
     if (data) {
       const events = [];
@@ -35,8 +35,20 @@ function FilteredEventsPage(props) {
     }
   }, [data]);
 
+  let pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta name="description" content="A list of filtered events" />
+    </Head>
+  );
+
   if (!loadedEvents) {
-    return <p className="center">Loading...</p>;
+    return (
+      <Fragment>
+        {pageHeadData}
+        <p className="center">Loading...</p>
+      </Fragment>
+    );
   }
 
   const filteredYear = filterData[0]; // zawsze string
@@ -44,8 +56,16 @@ function FilteredEventsPage(props) {
 
   const numYear = +filteredYear; // zamiana na liczbę przez znak dodawania JS triczek
   const numMonth = +filteredMonth;
-  console.log("numMonth")
-  console.log(numMonth)
+
+  pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta
+        name="description"
+        content={`All eventns for: ${numMonth}/${numYear}`}
+      />
+    </Head>
+  );
 
   // walidacja czy dane z urla prawdiłowe, czy n. ktoś nie wpisał abss zamiast liczby
   if (
@@ -60,6 +80,7 @@ function FilteredEventsPage(props) {
     // gdy mamy konkrentgo propsa, ze jest błąd
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>Invalid filter. Please adjust your values!</p>
         </ErrorAlert>
@@ -84,6 +105,7 @@ function FilteredEventsPage(props) {
   if (!filteredEvens || filteredEvens.length === 0) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>No events found for the chosen filter!</p>
         </ErrorAlert>
@@ -98,18 +120,11 @@ function FilteredEventsPage(props) {
   const date = new Date(numYear, numMonth - 1); // miesiace zaczynaja sie od zera
   return (
     <Fragment>
-      <Head>
-        <title>Filtered Events</title>
-        <meta
-          name="description"
-          content={`All eventns for: ${numMonth}/${numYear}`}
-        />
-      </Head>
+      {pageHeadData}
       <ResultsTitle data={date} />
       <EventList items={filteredEvens} />
     </Fragment>
   );
 }
-
 
 export default FilteredEventsPage;
