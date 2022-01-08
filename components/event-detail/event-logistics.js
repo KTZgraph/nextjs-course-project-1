@@ -1,4 +1,5 @@
-import Image from 'next/image';
+import Image from 'next/image';  //https://nextjs.org/docs/api-reference/next/image
+
 
 import AddressIcon from '../icons/address-icon';
 import DateIcon from '../icons/date-icon';
