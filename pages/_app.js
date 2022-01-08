@@ -1,3 +1,5 @@
+//shell dla sekcji body mojej aplikacji
+
 import Head from "next/head";
 
 import Layout from "../components/layout/layout";
